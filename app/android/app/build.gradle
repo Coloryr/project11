@@ -25,6 +25,13 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
+def keyProps = new Properties()
+def keyPropsFile = rootProject.file('../../keystore/flutter_key')
+def performSigning = keyPropsFile.exists()
+if (performSigning) {
+    keyProps.load(new FileInputStream(keyPropsFile))
+}
+
 android {
     compileSdkVersion 30
 
@@ -39,6 +46,23 @@ android {
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    if (performSigning) {
+        signingConfigs {
+            release {
+                keyAlias keyProps['keyAlias']
+                keyPassword keyProps['keyPassword']
+                storeFile keyProps['storeFile'] ? file(keyProps['storeFile']) : null
+                storePassword keyProps['storePassword']
+            }
+            debug {
+                keyAlias keyProps['keyAlias']
+                keyPassword keyProps['keyPassword']
+                storeFile keyProps['storeFile'] ? file(keyProps['storeFile']) : null
+                storePassword keyProps['storePassword']
+            }
+        }
     }
 
     defaultConfig {
