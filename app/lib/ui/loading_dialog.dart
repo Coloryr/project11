@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-abstract class OnDialogClose{
+abstract class OnDialogClose {
   void dialogClose();
 }
 
@@ -9,8 +9,8 @@ class LoadingDialog extends StatefulWidget {
   final String _content;
   bool _isActive = false;
   final OnDialogClose _close;
-  LoadingDialog(
-      this._close,
+
+  LoadingDialog(this._close,
       {Key? key, Color valueColor = Colors.black, String content = "加载中..."})
       : _valueColor = valueColor,
         _content = content,
@@ -25,9 +25,8 @@ class LoadingDialog extends StatefulWidget {
 }
 
 class _LoadingDialogState extends State<LoadingDialog> {
-
+  @override
   void initState() {
-    // loading弹窗当前为活跃界面
     super.initState();
     widget._isActive = true;
   }
@@ -35,7 +34,6 @@ class _LoadingDialogState extends State<LoadingDialog> {
   @override
   Widget build(BuildContext context) {
     return Material(
-      // 设置透明
       type: MaterialType.transparency,
       child: Center(
         child: Container(

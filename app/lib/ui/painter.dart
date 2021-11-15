@@ -7,7 +7,12 @@ class MyPainter extends CustomPainter {
   Offset p1;
   Offset p2;
 
-  MyPainter({required this.lineColor, required this.width, required this.p1, required this.p2});
+  MyPainter(
+      {required this.lineColor,
+      required this.width,
+      required this.p1,
+      required this.p2});
+
   @override
   void paint(Canvas canvas, Size size) {
     Paint _paint = Paint()
@@ -29,7 +34,12 @@ class MyPainter1 extends CustomPainter {
   Offset p1;
   double radius;
 
-  MyPainter1({required this.lineColor, required this.width, required this.p1, required this.radius});
+  MyPainter1(
+      {required this.lineColor,
+      required this.width,
+      required this.p1,
+      required this.radius});
+
   @override
   void paint(Canvas canvas, Size size) {
     Paint _paint = Paint()
@@ -52,7 +62,10 @@ class MyPainter2 extends CustomPainter {
   Offset p2;
 
   MyPainter2(
-      {required this.lineColor, required this.width, required this.p1, required this.p2});
+      {required this.lineColor,
+      required this.width,
+      required this.p1,
+      required this.p2});
 
   @override
   void paint(Canvas canvas, Size size) {

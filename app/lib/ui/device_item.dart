@@ -5,10 +5,9 @@ import 'package:app/ui/map.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-import 'package:charts_flutter/flutter.dart' as charts;
 
 import '../bluetooth_utils.dart';
-import 'Painter.dart';
+import 'item.dart';
 import 'loading_dialog.dart';
 
 class DeviceItemUI extends StatefulWidget {
@@ -22,27 +21,26 @@ class DeviceItemUI extends StatefulWidget {
   State<DeviceItemUI> createState() => _DeviceItemPageState();
 }
 
-class _DeviceItemPageState extends State<DeviceItemUI> implements OnDialogClose{
-  late BluetoothItem item;
-  bool visible = true;
-  bool init = false;
+class _DeviceItemPageState extends State<DeviceItemUI>
+    implements OnDialogClose, OnData, OnMapClose {
+  late BluetoothItem _item;
+  bool _init = false;
+  bool _isMap = false;
+  final Item _a1 = Item();
+  final Item _a2 = Item();
+  final Item _a3 = Item();
+  final Item _a4 = Item();
+  final Item _a5 = Item();
+  late MapUI _mapUI;
 
-  _DeviceItemPageState(){
-    Future.delayed(const Duration(milliseconds: 100), () { test(); });
-  }
-
-  static double angleToRadian(double angle) {
-    return angle * pi / 180;
-  }
-
-  Offset angleToXY(double angle)
-  {
-    var radian = angleToRadian(angle);
-    return Offset(cos(radian) * 100 + 6, sin(radian) * 100 + 6);
+  _DeviceItemPageState() {
+    Future.delayed(const Duration(milliseconds: 100), () {
+      test();
+    });
   }
 
   void close() async {
-    await item.item.device.disconnect();
+    await _item.item.device.disconnect();
     Future.delayed(const Duration(microseconds: 100), () {
       pop();
       show("连接设备", "连接失败");
@@ -51,56 +49,111 @@ class _DeviceItemPageState extends State<DeviceItemUI> implements OnDialogClose{
 
   @override
   void dialogClose() {
-    if (!init) {
+    if (!_init) {
       close();
     }
   }
 
-  void showLoadingDialog() async {
-    var dialog = LoadingDialog(this, content: "连接设备中");
-    showDialog(context: context, builder: (BuildContext context) { return dialog; });
+  @override
+  void mapClose() {
+    _isMap = false;
   }
 
-  // 隐藏加载进度条
+  void showLoadingDialog() async {
+    var dialog = LoadingDialog(this, content: "连接设备中");
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return dialog;
+        });
+  }
+
   hideLoadingDialog() {
     Navigator.of(context).pop();
   }
 
+  @override
+  void data(String data) {
+    if (data.startsWith("a1:")) {
+      var temp = double.parse(data.substring(2));
+      _a1.addData(temp);
+      setState(() {
+        _a1.update();
+      });
+      if (_isMap) {
+        _mapUI.data = temp;
+      }
+    } else if (data.startsWith("a2:")) {
+      var temp = double.parse(data.substring(2));
+      _a2.addData(temp);
+      setState(() {
+        _a2.update();
+      });
+      if (_isMap) {
+        _mapUI.data1 = temp;
+      }
+    } else if (data.startsWith("a3:")) {
+      _a3.addData(double.parse(data.substring(2)));
+      setState(() {
+        _a3.update();
+      });
+    } else if (data.startsWith("a4:")) {
+      _a4.addData(double.parse(data.substring(2)));
+      setState(() {
+        _a4.update();
+      });
+    } else if (data.startsWith("a5:")) {
+      _a5.addData(double.parse(data.substring(2)));
+      setState(() {
+        _a5.update();
+      });
+    }
+  }
+
   void test() async {
     showLoadingDialog();
-    item = BluetoothItem(widget.res);
-    if (!await item.ok) {
+    _item = BluetoothItem(widget.res, this);
+    if (!await _item.ok) {
       pop();
       show("不支持的设备", "你链接的不是指定的设备");
     }
     hideLoadingDialog();
-    init = true;
+    _init = true;
+  }
+
+  void _test() {
+    _a1.addData(Random().nextDouble() * 90);
+    setState(() {
+      _a1.update();
+    });
+    _a2.addData(Random().nextDouble() * 90);
+    setState(() {
+      _a2.update();
+    });
+    _a3.addData(Random().nextDouble() * 90);
+    setState(() {
+      _a3.update();
+    });
+    _a4.addData(Random().nextDouble() * 90);
+    setState(() {
+      _a4.update();
+    });
+    _a5.addData(Random().nextDouble() * 90);
+    setState(() {
+      _a5.update();
+    });
   }
 
   void _map() {
-    goto(const MapUI());
-  }
-
-  Widget getLine() {
-    List<LinearSales> dataLine = [
-      LinearSales( 0, 90),
-      LinearSales( 1, 80),
-      LinearSales( 2, 70),
-      LinearSales( 3, 60),
-      LinearSales( 4, 50),
-      LinearSales(10, 40),
-    ];
-
-    var seriesLine = [
-      charts.Series<LinearSales , num>(
-        data: dataLine,
-        domainFn: (LinearSales  lines, _) => lines.point,
-        measureFn: (LinearSales  lines, _) => lines.sale,
-        id: "Lines",
-      )
-    ];
-    Widget line = charts.LineChart(seriesLine);
-    return line;
+    _test();
+    // _isMap = true;
+    // goto(_mapUI = MapUI(this));
+    if (_isMap) {
+      Future.delayed(const Duration(milliseconds: 10), () {
+        _mapUI.data = _a1.data;
+        _mapUI.data1 = _a2.data;
+      });
+    }
   }
 
   @override
@@ -109,31 +162,16 @@ class _DeviceItemPageState extends State<DeviceItemUI> implements OnDialogClose{
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Column(
-        children: [
-          Container(
-            width: double.infinity,
-            margin: const EdgeInsets.all(5),
-            color: const Color(0xFFFEFEFE),
-            height: 120,
-            child: Stack(
-              children: [
-                CustomPaint(
-                  foregroundPainter: MyPainter2(
-                      lineColor: Colors.lightBlueAccent,
-                      width: 5.0,
-                      p1: const Offset(6, 6),
-                      p2: angleToXY(0)
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.fromLTRB(120, 0, 0, 0),
-                  child: getLine(),
-                )
-              ],
-            ),
-          )
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            _a1.getItem(),
+            _a2.getItem(),
+            _a3.getItem(),
+            _a4.getItem(),
+            _a5.getItem()
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _map,
@@ -144,15 +182,8 @@ class _DeviceItemPageState extends State<DeviceItemUI> implements OnDialogClose{
   }
 
   @override
-  void dispose() {
+  void dispose() async {
+    await _item.item.device.disconnect();
     super.dispose();
-    item.item.device.disconnect();
   }
-}
-
-
-class LinearSales {
-  int point;
-  int sale;
-  LinearSales(this.point, this.sale);
 }

@@ -8,7 +8,7 @@ void main() {
   BluetoothUtils.initBlue();
 }
 
-void pop(){
+void pop() {
   Navigator.pop(app);
 }
 
@@ -70,8 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
     app = context;
     return const Scaffold(
         body: SafeArea(
-          child: DeviceListUI(),
-        )
-    );
+      child: DeviceListUI(),
+    ));
   }
 }

@@ -1,7 +1,9 @@
+import 'dart:io';
+
 import 'package:app/main.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
-abstract class ScanRes{
+abstract class ScanRes {
   void res(List<ScanResult> list);
 }
 
@@ -32,38 +34,45 @@ class BluetoothUtils {
     _flutterBlue.startScan(timeout: const Duration(seconds: 12));
     _flutterBlue.stopScan();
   }
-
-
 }
 
-class ServerUUID{
+class ServerUUID {
   static final Guid server = Guid("6E400001-B5A3-F393-E0A9-E50E24DCCA9E");
   static final Guid tx = Guid("6E400003-B5A3-F393-E0A9-E50E24DCCA9E");
   static final Guid rx = Guid("6E400002-B5A3-F393-E0A9-E50E24DCCA9E");
 }
 
+abstract class OnData {
+  void data(String data);
+}
+
 class BluetoothItem {
   ScanResult item;
+  OnData data;
   late BluetoothService service;
   BluetoothCharacteristic? tx;
   BluetoothCharacteristic? rx;
 
-  BluetoothItem(this.item);
+  BluetoothItem(this.item, this.data);
 
   Future<bool> get ok async {
     if (!await connect()) {
       return false;
     }
-    if(!test()) {
+    if (!test()) {
       return false;
     }
+    await tx!.setNotifyValue(true);
+    tx!.value.listen((value) {
+      data.data(systemEncoding.decoder.convert(value));
+    });
     return true;
   }
 
   Future<bool> connect() async {
     var res = await item.device.state.first;
-    if(res != BluetoothDeviceState.connected) {
-      await item.device.connect(autoConnect : false);
+    if (res != BluetoothDeviceState.connected) {
+      await item.device.connect(autoConnect: false);
     }
     List<BluetoothService> services = await item.device.discoverServices();
 
@@ -73,6 +82,7 @@ class BluetoothItem {
         return true;
       }
     }
+
     return false;
   }
 
@@ -81,11 +91,14 @@ class BluetoothItem {
     for (var item in characteristics) {
       if (item.uuid == ServerUUID.rx) {
         rx = item;
-      }
-      else if (item.uuid == ServerUUID.tx) {
+      } else if (item.uuid == ServerUUID.tx) {
         tx = item;
       }
     }
     return rx != null && tx != null;
+  }
+
+  void write(String data) {
+    tx?.write(systemEncoding.encoder.convert(data));
   }
 }

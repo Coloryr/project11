@@ -13,39 +13,40 @@ import '../main.dart';
 class DeviceListUI extends StatefulWidget {
   const DeviceListUI({Key? key}) : super(key: key);
 
-  final String title = "设备列表";
+  final String _title = "设备列表";
 
   @override
   State<DeviceListUI> createState() => _DeviceListPageState();
 }
 
-abstract class OnClick{
+abstract class OnClick {
   void click(ScanResult item);
 }
 
-class _DeviceListPageState extends State<DeviceListUI> implements ScanRes,OnClick, OnDialogClose {
-  List<Widget> widgets = [];
-  List<ScanResult> additem = [];
+class _DeviceListPageState extends State<DeviceListUI>
+    implements ScanRes, OnClick, OnDialogClose {
+  final List<Widget> _widgets = [];
+  final List<ScanResult> _addItem = [];
   bool visible = false;
 
-  _DeviceListPageState(){
-    Future.delayed(const Duration(microseconds: 10), (){
+  _DeviceListPageState() {
+    Future.delayed(const Duration(microseconds: 10), () {
       _res();
     });
   }
 
   void res(List<ScanResult> list) {
     for (ScanResult item in list) {
-      if (additem.contains(item)) {
+      if (_addItem.contains(item)) {
         continue;
       }
       if (item.device.type == BluetoothDeviceType.unknown) {
         continue;
       }
-      additem.add(item);
+      _addItem.add(item);
       var item1 = DeviceListItem(item, this);
       setState(() {
-        widgets.add(item1);
+        _widgets.add(item1);
       });
     }
   }
@@ -57,7 +58,7 @@ class _DeviceListPageState extends State<DeviceListUI> implements ScanRes,OnClic
 
   @override
   void dialogClose() {
-    Future.delayed(const Duration(microseconds: 10), (){
+    Future.delayed(const Duration(microseconds: 10), () {
       _res();
     });
   }
@@ -78,9 +79,9 @@ class _DeviceListPageState extends State<DeviceListUI> implements ScanRes,OnClic
   }
 
   void _res() {
-    additem.clear();
+    _addItem.clear();
     setState(() {
-      widgets.clear();
+      _widgets.clear();
     });
     _scan();
   }
@@ -89,7 +90,7 @@ class _DeviceListPageState extends State<DeviceListUI> implements ScanRes,OnClic
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(widget._title),
       ),
       body: ListView(
         children: [
@@ -109,9 +110,9 @@ class _DeviceListPageState extends State<DeviceListUI> implements ScanRes,OnClic
             ),
           ),
           ListView.builder(
-            itemCount: widgets.length,
+            itemCount: _widgets.length,
             itemBuilder: (context, index) {
-              return widgets[index];
+              return _widgets[index];
             },
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
