@@ -7,12 +7,15 @@ import 'package:flutter/material.dart';
 
 class Item {
   static const _fillNumber = 20;
+  static const double _p1_x = 56;
+  static const double _p1_y = 56;
+  static const double _length = 42;
+  static const double _max_angle = 360;
   double _data =  0.0;
   double get data {
     return _data;
   }
   final List<LinearSales> _dataLine = [];
-  final List<LinearSales> _old = [];
 
   static double angleToRadian(double angle) {
     return angle * pi / 180;
@@ -20,7 +23,7 @@ class Item {
 
   static Offset angleToXY(double angle) {
     var radian = angleToRadian(angle);
-    return Offset(cos(radian) * 100 + 6, sin(radian) * 100 + 6);
+    return Offset(cos(radian) * _length + _p1_x, sin(radian) * _length + _p1_y);
   }
 
   Item() {
@@ -30,16 +33,22 @@ class Item {
   }
 
   void addData(double data) {
-    _old.clear();
-    for (int a = 1; a < _fillNumber; a++) {
-      _old.add(LinearSales(a - 1, _dataLine[a].sale));
-    }
-    _old.add(LinearSales(19, data));
+    for(var item in _dataLine)
+      {
+        item.down();
+      }
+    _dataLine.removeAt(0);
+    _dataLine.add(LinearSales(19, data));
+    // _old.clear();
+    // for (int a = 1; a < _fillNumber; a++) {
+    //   _old.add(LinearSales(a - 1, _dataLine[a].sale));
+    // }
+    // _old.add();
   }
 
   void update() {
-    _dataLine.clear();
-    _dataLine.addAll(_old);
+    // _dataLine.clear();
+    // _dataLine.addAll(_old);
     _data = _dataLine[19].sale;
   }
 
@@ -71,9 +80,9 @@ class Item {
           CustomPaint(
             foregroundPainter: MyPainter2(
                 lineColor: Color.lerp(const Color.fromARGB(0xff, 0xff, 0, 0),
-                    const Color.fromARGB(0xff, 0, 0xff, 0), _data / 90)!,
+                    const Color.fromARGB(0xff, 0, 0xff, 0), _data / _max_angle)!,
                 width: 5.0,
-                p1: const Offset(6, 6),
+                p1: const Offset(_p1_x, _p1_y),
                 p2: angleToXY(data)),
           ),
           Container(
@@ -91,4 +100,8 @@ class LinearSales {
   double sale;
 
   LinearSales(this.point, this.sale);
+
+  void down() {
+    point --;
+  }
 }

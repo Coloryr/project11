@@ -86,7 +86,7 @@ class MyPainter2 extends CustomPainter {
     canvas.drawLine(p1, p2, _paint);
     double x = p2.dx - p1.dx;
     double y = p2.dy - p1.dy;
-    canvas.drawCircle(p2.translate(x * 0.05, y * 0.05), 5, _paint);
+    canvas.drawCircle(p2.translate(x * 0.12, y * 0.12), 5, _paint);
   }
 
   @override

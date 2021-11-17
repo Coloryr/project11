@@ -12,8 +12,8 @@ import 'loading_dialog.dart';
 
 class DeviceItemUI extends StatefulWidget {
   const DeviceItemUI(this.res, this.close, {Key? key}) : super(key: key);
-  final ScanResult res;
-  final OnDialogClose close;
+  final ScanResult? res;
+  final OnDialogClose? close;
 
   final String title = "数据显示";
 
@@ -112,7 +112,12 @@ class _DeviceItemPageState extends State<DeviceItemUI>
 
   void test() async {
     showLoadingDialog();
-    _item = BluetoothItem(widget.res, this);
+    if (widget.res == null) {
+      _init = true;
+      hideLoadingDialog();
+      return;
+    }
+    _item = BluetoothItem(widget.res!, this);
     if (!await _item.ok) {
       pop();
       show("不支持的设备", "你链接的不是指定的设备");
@@ -121,24 +126,28 @@ class _DeviceItemPageState extends State<DeviceItemUI>
     _init = true;
   }
 
+  double _angle = 0;
+
   void _test() {
-    _a1.addData(Random().nextDouble() * 90);
+    _a1.addData(_angle ++);
+    if(_angle >= 360)
+      _angle = 0;
     setState(() {
       _a1.update();
     });
-    _a2.addData(Random().nextDouble() * 90);
+    _a2.addData(Random().nextDouble() * 360);
     setState(() {
       _a2.update();
     });
-    _a3.addData(Random().nextDouble() * 90);
+    _a3.addData(Random().nextDouble() * 360);
     setState(() {
       _a3.update();
     });
-    _a4.addData(Random().nextDouble() * 90);
+    _a4.addData(Random().nextDouble() * 360);
     setState(() {
       _a4.update();
     });
-    _a5.addData(Random().nextDouble() * 90);
+    _a5.addData(Random().nextDouble() * 360);
     setState(() {
       _a5.update();
     });
