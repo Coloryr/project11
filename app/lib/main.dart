@@ -1,5 +1,4 @@
 import 'package:app/bluetooth_utils.dart';
-import 'package:app/ui/device_item.dart';
 import 'package:app/ui/device_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -71,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
     app = context;
     return const Scaffold(
         body: SafeArea(
-      child: DeviceItemUI(null, null),
+      child: DeviceListUI(),
     ));
   }
 }

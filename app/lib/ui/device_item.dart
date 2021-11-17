@@ -12,8 +12,8 @@ import 'loading_dialog.dart';
 
 class DeviceItemUI extends StatefulWidget {
   const DeviceItemUI(this.res, this.close, {Key? key}) : super(key: key);
-  final ScanResult? res;
-  final OnDialogClose? close;
+  final ScanResult res;
+  final OnDialogClose close;
 
   final String title = "数据显示";
 
@@ -112,12 +112,13 @@ class _DeviceItemPageState extends State<DeviceItemUI>
 
   void test() async {
     showLoadingDialog();
-    if (widget.res == null) {
-      _init = true;
-      hideLoadingDialog();
-      return;
-    }
-    _item = BluetoothItem(widget.res!, this);
+    // if (widget.res == null) {
+    //   _init = true;
+    //   show("连接错误", "设备为空");
+    //   hideLoadingDialog();
+    //   return;
+    // }
+    _item = BluetoothItem(widget.res, this);
     if (!await _item.ok) {
       pop();
       show("不支持的设备", "你链接的不是指定的设备");
