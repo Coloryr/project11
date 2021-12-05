@@ -1,10 +1,10 @@
-#ifndef BLE_H
-#define BLE_H
-#include "Arduino.h"
+// #ifndef BLE_H
+// #define BLE_H
+// #include "Arduino.h"
 
-void setupBLE();
-void loopBLE();
+// void setupBLE();
+// void loopBLE();
 
-extern bool BLEsend;
+// extern bool BLEsend;
 
-#endif 
+// #endif 
