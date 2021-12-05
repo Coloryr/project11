@@ -18,12 +18,10 @@ uint32_t cnt = 0;
 #define CHARACTERISTIC_UUID_TX "6E400003-B5A3-F393-E0A9-E50E24DCCA9E"
 
 const char *command1 = "a1:";
-const char *command2 = "a1:";
-const char *command3 = "range0:";
-const char *command4 = "range1:";
-const char *command5 = "range2:";
-const char *command6 = "range3:";
-const char *command7 = "range4:";
+const char *command2 = "a2:";
+const char *command3 = "a3:";
+const char *command4 = "a4:";
+const char *command5 = "a5:";
 
 bool BLEsend = false;
 
@@ -58,10 +56,19 @@ class MyCallbacks : public BLECharacteristicCallbacks
         }
     }
 };
+
+void testtask(void *arg)
+{
+    for (;;)
+    {
+        if (deviceConnected)
+            BLEsend = true;
+        delay(2000);
+    }
+}
+
 void setupBLE()
 {
-    Serial.begin(115200);
-
     // Create the BLE Device
     BLEDevice::init("A题测试机");
 
@@ -85,11 +92,34 @@ void setupBLE()
     // Start advertising
     pServer->getAdvertising()->start();
     Serial.println("Waiting a client connection to notify...");
+
+    xTaskCreate(testtask, "testtask", 8192, NULL, 3, NULL);
 }
 
 void go()
 {
-    String temp1 = command1 + String(90, 6);
+    long res = random(90);
+    String temp1 = command1 + String(res, 6);
+    txC->setValue(temp1.c_str());
+    txC->notify();
+
+    res = random(90);
+    temp1 = command2 + String(res, 6);
+    txC->setValue(temp1.c_str());
+    txC->notify();
+
+    res = random(90);
+    temp1 = command3 + String(res, 6);
+    txC->setValue(temp1.c_str());
+    txC->notify();
+
+    res = random(90);
+    temp1 = command4 + String(res, 6);
+    txC->setValue(temp1.c_str());
+    txC->notify();
+
+    res = random(90);
+    temp1 = command5 + String(res, 6);
     txC->setValue(temp1.c_str());
     txC->notify();
 }
@@ -98,8 +128,8 @@ void loopBLE()
 {
     if (BLEsend)
     {
+        Serial.println("send");
         go();
         BLEsend = false;
     }
-    delay(100);
 }
