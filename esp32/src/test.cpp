@@ -14,137 +14,87 @@
 #include <SPI.h>
 #include "test.h"
 
-// #define TFT_MISO -1
-// #define TFT_MOSI 23
-// #define TFT_SCLK 18
+#include <lvgl.h>
+#include <TFT_eSPI.h>
 
-TFT_eSPI tft = TFT_eSPI(); // Invoke library, pins defined in User_Setup.h
+/*Change to your screen resolution*/
+static const uint16_t screenWidth  = 128;
+static const uint16_t screenHeight = 160;
 
-#define TFT_GREY 0xBDF7
+static lv_disp_draw_buf_t draw_buf;
+static lv_color_t buf[ screenWidth * 10 ];
 
-float sx = 0, sy = 1, mx = 1, my = 0, hx = -1, hy = 0; // Saved H, M, S x & y multipliers
-float sdeg = 0, mdeg = 0, hdeg = 0;
-uint16_t osx = 64, osy = 64, omx = 64, omy = 64, ohx = 64, ohy = 64; // Saved H, M, S x & y coords
-uint16_t x0 = 0, x1 = 0, yy0 = 0, yy1 = 0;
-uint32_t targetTime = 0; // for next 1 second timeout
+TFT_eSPI tft = TFT_eSPI(screenWidth, screenHeight); /* TFT instance */
 
-static uint8_t conv2d(const char *p)
+
+/* Display flushing */
+void my_disp_flush( lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p )
 {
-    uint8_t v = 0;
-    if ('0' <= *p && *p <= '9')
-        v = *p - '0';
-    return 10 * v + *++p - '0';
+    uint32_t w = ( area->x2 - area->x1 + 1 );
+    uint32_t h = ( area->y2 - area->y1 + 1 );
+
+    tft.startWrite();
+    tft.setAddrWindow( area->x1, area->y1, w, h );
+    tft.pushColors( ( uint16_t * )&color_p->full, w * h, true );
+    tft.endWrite();
+
+    lv_disp_flush_ready( disp );
 }
 
-uint8_t hh = conv2d(__TIME__), mm = conv2d(__TIME__ + 3), ss = conv2d(__TIME__ + 6); // Get H, M, S from compile time
+static void btn_event_cb(lv_event_t * e)
+{
+    lv_event_code_t code = lv_event_get_code(e);
+    lv_obj_t * btn = lv_event_get_target(e);
+    if(code == LV_EVENT_CLICKED) {
+        static uint8_t cnt = 0;
+        cnt++;
 
-bool initial = 1;
+        /*Get the first child of the button which is the label and change its text*/
+        lv_obj_t * label = lv_obj_get_child(btn, 0);
+        lv_label_set_text_fmt(label, "Button: %d", cnt);
+    }
+}
 
 void setup_lcd()
 {
-    tft.init();
-    tft.setRotation(0);
-    tft.fillScreen(TFT_GREY);
-    tft.setTextColor(TFT_GREEN, TFT_GREY); // Adding a black background colour erases previous text automatically
+    Serial.begin( 115200 ); /* prepare for possible serial debug */
 
-    // Draw clock face
-    tft.fillCircle(64, 64, 61, TFT_BLUE);
-    tft.fillCircle(64, 64, 57, TFT_BLACK);
+    String LVGL_Arduino = "Hello Arduino! ";
+    LVGL_Arduino += String('V') + lv_version_major() + "." + lv_version_minor() + "." + lv_version_patch();
 
-    // Draw 12 lines
-    for (int i = 0; i < 360; i += 30)
-    {
-        sx = cos((i - 90) * 0.0174532925);
-        sy = sin((i - 90) * 0.0174532925);
-        x0 = sx * 57 + 64;
-        yy0 = sy * 57 + 64;
-        x1 = sx * 50 + 64;
-        yy1 = sy * 50 + 64;
+    Serial.println( LVGL_Arduino );
+    Serial.println( "I am LVGL_Arduino" );
 
-        tft.drawLine(x0, yy0, x1, yy1, TFT_BLUE);
-    }
+    lv_init();
 
-    // Draw 60 dots
-    for (int i = 0; i < 360; i += 6)
-    {
-        sx = cos((i - 90) * 0.0174532925);
-        sy = sin((i - 90) * 0.0174532925);
-        x0 = sx * 53 + 64;
-        yy0 = sy * 53 + 64;
+    tft.begin();          /* TFT init */
 
-        tft.drawPixel(x0, yy0, TFT_BLUE);
-        if (i == 0 || i == 180)
-            tft.fillCircle(x0, yy0, 1, TFT_CYAN);
-        if (i == 0 || i == 180)
-            tft.fillCircle(x0 + 1, yy0, 1, TFT_CYAN);
-        if (i == 90 || i == 270)
-            tft.fillCircle(x0, yy0, 1, TFT_CYAN);
-        if (i == 90 || i == 270)
-            tft.fillCircle(x0 + 1, yy0, 1, TFT_CYAN);
-    }
+    lv_disp_draw_buf_init( &draw_buf, buf, NULL, screenWidth * 10 );
 
-    tft.fillCircle(65, 65, 3, TFT_RED);
+    /*Initialize the display*/
+    static lv_disp_drv_t disp_drv;
+    lv_disp_drv_init( &disp_drv );
+    /*Change the following line to your display resolution*/
+    disp_drv.hor_res = screenWidth;
+    disp_drv.ver_res = screenHeight;
+    disp_drv.flush_cb = my_disp_flush;
+    disp_drv.draw_buf = &draw_buf;
+    lv_disp_drv_register( &disp_drv );
 
-    // Draw text at position 64,125 using fonts 4
-    // Only font numbers 2,4,6,7 are valid. Font 6 only contains characters [space] 0 1 2 3 4 5 6 7 8 9 : . a p m
-    // Font 7 is a 7 segment font and only contains characters [space] 0 1 2 3 4 5 6 7 8 9 : .
-    tft.drawCentreString("Time flies", 64, 130, 4);
+    lv_obj_t * btn = lv_btn_create(lv_scr_act());     /*Add a button the current screen*/
+    lv_obj_set_pos(btn, 0, 0);                            /*Set its position*/
+    lv_obj_set_size(btn, 80, 50);                          /*Set its size*/
+    lv_obj_add_event_cb(btn, btn_event_cb, LV_EVENT_ALL, NULL);           /*Assign a callback to the button*/
 
-    targetTime = millis() + 1000;
+    lv_obj_t * label = lv_label_create(btn);          /*Add a label to the button*/
+    lv_label_set_text(label, "Button");                     /*Set the labels text*/
+    lv_obj_center(label);
+
+    Serial.println( "Setup done" );
 }
 
 void loop_lcd()
 {
-    if (targetTime < millis())
-    {
-        targetTime = millis() + 1000;
-        ss++; // Advance second
-        if (ss == 60)
-        {
-            ss = 0;
-            mm++; // Advance minute
-            if (mm > 59)
-            {
-                mm = 0;
-                hh++; // Advance hour
-                if (hh > 23)
-                {
-                    hh = 0;
-                }
-            }
-        }
-
-        // Pre-compute hand degrees, x & y coords for a fast screen update
-        sdeg = ss * 6;                     // 0-59 -> 0-354
-        mdeg = mm * 6 + sdeg * 0.01666667; // 0-59 -> 0-360 - includes seconds
-        hdeg = hh * 30 + mdeg * 0.0833333; // 0-11 -> 0-360 - includes minutes and seconds
-        hx = cos((hdeg - 90) * 0.0174532925);
-        hy = sin((hdeg - 90) * 0.0174532925);
-        mx = cos((mdeg - 90) * 0.0174532925);
-        my = sin((mdeg - 90) * 0.0174532925);
-        sx = cos((sdeg - 90) * 0.0174532925);
-        sy = sin((sdeg - 90) * 0.0174532925);
-
-        if (ss == 0 || initial)
-        {
-            initial = 0;
-            // Erase hour and minute hand positions every minute
-            tft.drawLine(ohx, ohy, 65, 65, TFT_BLACK);
-            ohx = hx * 33 + 65;
-            ohy = hy * 33 + 65;
-            tft.drawLine(omx, omy, 65, 65, TFT_BLACK);
-            omx = mx * 44 + 65;
-            omy = my * 44 + 65;
-        }
-
-        // Redraw new hand positions, hour and minute hands not erased here to avoid flicker
-        tft.drawLine(osx, osy, 65, 65, TFT_BLACK);
-        tft.drawLine(ohx, ohy, 65, 65, TFT_WHITE);
-        tft.drawLine(omx, omy, 65, 65, TFT_WHITE);
-        osx = sx * 47 + 65;
-        osy = sy * 47 + 65;
-        tft.drawLine(osx, osy, 65, 65, TFT_RED);
-
-        tft.fillCircle(65, 65, 3, TFT_RED);
-    }
+    lv_timer_handler(); /* let the GUI do its work */
+    delay( 5 );
 }
