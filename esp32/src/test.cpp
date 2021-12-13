@@ -17,15 +17,16 @@
 #include <lvgl.h>
 #include <TFT_eSPI.h>
 
+#include "tft.h"
+
 /*Change to your screen resolution*/
-static const uint16_t screenWidth  = 128;
-static const uint16_t screenHeight = 160;
+static const uint16_t screenWidth  = 130;
+static const uint16_t screenHeight = 162;
 
 static lv_disp_draw_buf_t draw_buf;
 static lv_color_t buf[ screenWidth * 10 ];
 
 TFT_eSPI tft = TFT_eSPI(screenWidth, screenHeight); /* TFT instance */
-
 
 /* Display flushing */
 void my_disp_flush( lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p )
@@ -41,24 +42,8 @@ void my_disp_flush( lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *colo
     lv_disp_flush_ready( disp );
 }
 
-static void btn_event_cb(lv_event_t * e)
-{
-    lv_event_code_t code = lv_event_get_code(e);
-    lv_obj_t * btn = lv_event_get_target(e);
-    if(code == LV_EVENT_CLICKED) {
-        static uint8_t cnt = 0;
-        cnt++;
-
-        /*Get the first child of the button which is the label and change its text*/
-        lv_obj_t * label = lv_obj_get_child(btn, 0);
-        lv_label_set_text_fmt(label, "Button: %d", cnt);
-    }
-}
-
 void setup_lcd()
 {
-    Serial.begin( 115200 ); /* prepare for possible serial debug */
-
     String LVGL_Arduino = "Hello Arduino! ";
     LVGL_Arduino += String('V') + lv_version_major() + "." + lv_version_minor() + "." + lv_version_patch();
 
@@ -81,14 +66,37 @@ void setup_lcd()
     disp_drv.draw_buf = &draw_buf;
     lv_disp_drv_register( &disp_drv );
 
-    lv_obj_t * btn = lv_btn_create(lv_scr_act());     /*Add a button the current screen*/
-    lv_obj_set_pos(btn, 0, 0);                            /*Set its position*/
-    lv_obj_set_size(btn, 80, 50);                          /*Set its size*/
-    lv_obj_add_event_cb(btn, btn_event_cb, LV_EVENT_ALL, NULL);           /*Assign a callback to the button*/
+    lv_obj_t * label1 = lv_label_create(lv_scr_act());
+    lv_label_set_long_mode(label1, LV_LABEL_LONG_SCROLL_CIRCULAR);     /*Break the long lines*/
+    lv_label_set_text(label1, "a1:");
+    lv_obj_set_width(label1, 120); 
+    lv_obj_align(label1, LV_ALIGN_TOP_LEFT, 2, 0);
 
-    lv_obj_t * label = lv_label_create(btn);          /*Add a label to the button*/
-    lv_label_set_text(label, "Button");                     /*Set the labels text*/
-    lv_obj_center(label);
+    lv_obj_t * label2 = lv_label_create(lv_scr_act());
+    lv_label_set_long_mode(label2, LV_LABEL_LONG_SCROLL_CIRCULAR);     /*Circular scroll*/
+    lv_obj_set_width(label2, 120);
+    lv_label_set_text(label2, "a2:");
+    lv_obj_align(label2, LV_ALIGN_TOP_LEFT, 2, 20);
+
+    lv_obj_t * label3 = lv_label_create(lv_scr_act());
+    lv_label_set_long_mode(label3, LV_LABEL_LONG_SCROLL_CIRCULAR);     /*Circular scroll*/
+    lv_obj_set_width(label3, 120);
+    lv_label_set_text(label3, "a3:");
+    lv_obj_align(label3, LV_ALIGN_TOP_LEFT, 2, 40);
+
+    lv_obj_t * label4 = lv_label_create(lv_scr_act());
+    lv_label_set_long_mode(label4, LV_LABEL_LONG_SCROLL_CIRCULAR);     /*Circular scroll*/
+    lv_obj_set_width(label4, 120);
+    lv_label_set_text(label4, "a4:");
+    lv_obj_align(label4, LV_ALIGN_TOP_LEFT, 2, 60);
+
+    lv_obj_t * label5 = lv_label_create(lv_scr_act());
+    lv_label_set_long_mode(label5, LV_LABEL_LONG_SCROLL_CIRCULAR);     /*Circular scroll*/
+    lv_obj_set_width(label5, 120);
+    lv_label_set_text(label5, "a5:");
+    lv_obj_align(label5, LV_ALIGN_TOP_LEFT, 2, 80);
+
+    show_init();
 
     Serial.println( "Setup done" );
 }

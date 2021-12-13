@@ -6,6 +6,8 @@
 #include <BLEUtils.h>
 #include <BLE2902.h>
 
+#include "tft.h"
+
 BLECharacteristic *txC;
 BLEService *pService;
 BLEServer *pServer;
@@ -70,7 +72,7 @@ void testtask(void *arg)
 void setupBLE()
 {
     // Create the BLE Device
-    BLEDevice::init("A题测试机");
+    BLEDevice::init("角度测试仪");
 
     // Create the BLE Server
     pServer = BLEDevice::createServer();
@@ -98,28 +100,33 @@ void setupBLE()
 
 void go()
 {
-    long res = random(90);
-    String temp1 = command1 + String(res, 6);
+    float res = (float)random(36000) / 10;
+    show(1, res);
+    String temp1 = command1 + String(res, 2);
     txC->setValue(temp1.c_str());
     txC->notify();
 
-    res = random(90);
-    temp1 = command2 + String(res, 6);
+    res = (float)random(36000) / 10;
+    show(2, res);
+    temp1 = command2 + String(res, 2);
     txC->setValue(temp1.c_str());
     txC->notify();
 
-    res = random(90);
-    temp1 = command3 + String(res, 6);
+    res = (float)random(36000) / 10;
+    show(3, res);
+    temp1 = command3 + String(res, 2);
     txC->setValue(temp1.c_str());
     txC->notify();
 
-    res = random(90);
-    temp1 = command4 + String(res, 6);
+    res = (float)random(36000) / 10;
+    show(4, res);
+    temp1 = command4 + String(res, 2);
     txC->setValue(temp1.c_str());
     txC->notify();
 
-    res = random(90);
-    temp1 = command5 + String(res, 6);
+    res = (float)random(36000) / 10;
+    show(5, res);
+    temp1 = command5 + String(res, 2);
     txC->setValue(temp1.c_str());
     txC->notify();
 }
