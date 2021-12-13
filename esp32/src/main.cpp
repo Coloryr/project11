@@ -6,7 +6,7 @@
 
 #define LV_TICK_PERIOD_MS 1
 
-uint8_t a1,a2,a3,a4,a5;
+uint8_t a1, a2, a3, a4, a5;
 SemaphoreHandle_t xGuiSemaphore;
 
 static void lv_tick_task(void *arg)
@@ -25,6 +25,10 @@ void setup()
     Serial.begin(115200);
     xGuiSemaphore = xSemaphoreCreateMutex();
 
+    pinMode(GPIO_NUM_4, ANALOG);
+    pinMode(GPIO_NUM_13, ANALOG);
+    pinMode(GPIO_NUM_35, ANALOG);
+
     esp_timer_handle_t periodic_timer;
     esp_timer_create(&periodic_timer_args, &periodic_timer);
     esp_timer_start_periodic(periodic_timer, LV_TICK_PERIOD_MS * 1000);
@@ -32,7 +36,7 @@ void setup()
     drvice_init();
     show_init();
 
-    setupBLE();
+    // setupBLE();
 }
 
 void loop()
@@ -56,4 +60,8 @@ void loop()
         lv_task_handler();
         xSemaphoreGive(xGuiSemaphore);
     }
+
+    float res = (float)analogRead(GPIO_NUM_4) / 12;
+    show(1, res);
+    delay(100);
 }
