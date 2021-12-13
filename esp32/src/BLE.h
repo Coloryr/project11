@@ -4,7 +4,6 @@
 #include <BLEDevice.h> // 引入相关库
 
 void setupBLE();
-void loopBLE();
 
 extern bool BLEsend;
 

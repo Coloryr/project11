@@ -64,7 +64,9 @@ void testtask(void *arg)
     for (;;)
     {
         if (deviceConnected)
-            BLEsend = true;
+        {
+            go();
+        }
         delay(2000);
     }
 }
@@ -100,43 +102,33 @@ void setupBLE()
 
 void go()
 {
-    float res = (float)random(36000) / 10;
+    float res = (float)random(36000) / 100;
     show(1, res);
     String temp1 = command1 + String(res, 2);
     txC->setValue(temp1.c_str());
     txC->notify();
 
-    res = (float)random(36000) / 10;
+    res = (float)random(36000) / 100;
     show(2, res);
     temp1 = command2 + String(res, 2);
     txC->setValue(temp1.c_str());
     txC->notify();
 
-    res = (float)random(36000) / 10;
+    res = (float)random(36000) / 100;
     show(3, res);
     temp1 = command3 + String(res, 2);
     txC->setValue(temp1.c_str());
     txC->notify();
 
-    res = (float)random(36000) / 10;
+    res = (float)random(36000) / 100;
     show(4, res);
     temp1 = command4 + String(res, 2);
     txC->setValue(temp1.c_str());
     txC->notify();
 
-    res = (float)random(36000) / 10;
+    res = (float)random(36000) / 100;
     show(5, res);
     temp1 = command5 + String(res, 2);
     txC->setValue(temp1.c_str());
     txC->notify();
-}
-
-void loopBLE()
-{
-    if (BLEsend)
-    {
-        Serial.println("send");
-        go();
-        BLEsend = false;
-    }
 }
