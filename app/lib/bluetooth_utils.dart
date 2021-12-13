@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:app/main.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
+import 'localhost_utils.dart';
+
 abstract class ScanRes {
   void res(List<ScanResult> list);
 }
@@ -25,6 +27,8 @@ class BluetoothUtils {
       show("蓝牙未开启", "你的设备未启动蓝牙，无法使用功能");
       return;
     }
+
+    LocalUtils.get();
 
     _enable = true;
   }
@@ -99,6 +103,6 @@ class BluetoothItem {
   }
 
   void write(String data) {
-    tx?.write(systemEncoding.encoder.convert(data));
+    rx?.write(systemEncoding.encoder.convert(data));
   }
 }

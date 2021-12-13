@@ -75,7 +75,7 @@ class _DeviceItemPageState extends State<DeviceItemUI>
   @override
   void data(String data) {
     if (data.startsWith("a1:")) {
-      var temp = double.parse(data.substring(2));
+      var temp = double.parse(data.substring(3));
       _a1.addData(temp);
       setState(() {
         _a1.update();
@@ -84,7 +84,8 @@ class _DeviceItemPageState extends State<DeviceItemUI>
         _mapUI.data = temp;
       }
     } else if (data.startsWith("a2:")) {
-      var temp = double.parse(data.substring(2));
+      var test = data.substring(3);
+      var temp = double.parse(test);
       _a2.addData(temp);
       setState(() {
         _a2.update();
@@ -93,17 +94,17 @@ class _DeviceItemPageState extends State<DeviceItemUI>
         _mapUI.data1 = temp;
       }
     } else if (data.startsWith("a3:")) {
-      _a3.addData(double.parse(data.substring(2)));
+      _a3.addData(double.parse(data.substring(3)));
       setState(() {
         _a3.update();
       });
     } else if (data.startsWith("a4:")) {
-      _a4.addData(double.parse(data.substring(2)));
+      _a4.addData(double.parse(data.substring(3)));
       setState(() {
         _a4.update();
       });
     } else if (data.startsWith("a5:")) {
-      _a5.addData(double.parse(data.substring(2)));
+      _a5.addData(double.parse(data.substring(3)));
       setState(() {
         _a5.update();
       });

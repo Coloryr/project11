@@ -35,6 +35,7 @@ class _DeviceListPageState extends State<DeviceListUI>
     });
   }
 
+  @override
   void res(List<ScanResult> list) {
     for (ScanResult item in list) {
       if (_addItem.contains(item)) {
