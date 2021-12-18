@@ -20,6 +20,16 @@ const esp_timer_create_args_t periodic_timer_args = {
     .dispatch_method = ESP_TIMER_TASK,
     .name = "periodic_gui"};
 
+void task(void *arg)
+{
+    for (;;)
+    {
+        float res = (float)analogRead(GPIO_NUM_4) / 12;
+        show(1, res);
+        delay(500);
+    }
+}
+
 void setup()
 {
     Serial.begin(115200);
@@ -36,7 +46,9 @@ void setup()
     drvice_init();
     show_init();
 
-    // setupBLE();
+    xTaskCreate(task, "task", 1024, NULL, 3, NULL);
+
+    setupBLE();
 }
 
 void loop()
@@ -60,8 +72,9 @@ void loop()
         lv_task_handler();
         xSemaphoreGive(xGuiSemaphore);
     }
-
-    float res = (float)analogRead(GPIO_NUM_4) / 12;
-    show(1, res);
+    // float res = (float)analogRead(GPIO_NUM_13) / 12;
+    // show(2, res);
+    // float res = (float)analogRead(GPIO_NUM_35) / 12;
+    // show(3, res);
     delay(100);
 }

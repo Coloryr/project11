@@ -63,8 +63,8 @@ void testtask(void *arg)
 {
     for (;;)
     {
-     float res = (float)(360*analogRead(0)/4096);
-     show(1, res);
+    //  float res = (float)(360*analogRead(0)/4096);
+    //  show(1, res);
         if (deviceConnected)
         {
             go();
@@ -105,7 +105,7 @@ void setupBLE()
 void go()
 {
     // float res = (float)random(36000) / 100;3000*analogRead(0)/4096/360
-    float res = (float)(360*analogRead(GPIO_NUM_0)/4096);
+    float res = (float)(360*analogRead(GPIO_NUM_4)/4096);
     String temp1 = command1 + String(res, 2);
     txC->setValue(temp1.c_str());
     txC->notify();

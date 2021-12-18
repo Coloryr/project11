@@ -25,13 +25,13 @@
 #define TFT_SCLK 18
 #define TFT_CS   5  // Chip select control pin
 #define TFT_DC    27  // Data Command control pin
-#define TFT_RST   26  // Reset pin (could connect to RST pin)
+#define TFT_RST   33  // Reset pin (could connect to RST pin)
 
 #define ST7735_DRIVER      // Define additional parameters below for this display
 #define TFT_WIDTH  128
 #define TFT_HEIGHT 160
 
-#define TFT_BL   17            // LED back-light control pin
+// #define TFT_BL   19            // LED back-light control pin
 #define TFT_BACKLIGHT_ON HIGH  // Level to turn ON back-light (HIGH or LOW)
 #define SPI_FREQUENCY  27000000
 
