@@ -8,6 +8,13 @@
 
 SemaphoreHandle_t xGuiSemaphore;
 
+#define ADC1 22
+#define ADC2 34
+#define ADC3 32
+#define ADC4 13
+#define ADC5 12
+#define ADC6 14
+
 static void lv_tick_task(void *arg)
 {
     lv_tick_inc(LV_TICK_PERIOD_MS);
@@ -31,7 +38,9 @@ void setup()
     drvice_init();
     show_init();
 
-    setupBLE();
+
+
+    // setupBLE();
 }
 
 void loop()

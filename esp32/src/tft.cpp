@@ -9,6 +9,7 @@ lv_obj_t *t2;
 lv_obj_t *t3;
 lv_obj_t *t4;
 lv_obj_t *t5;
+lv_obj_t *t6;
 
 /*Change to your screen resolution*/
 static const uint16_t screenWidth = 130;
@@ -85,23 +86,32 @@ void show_init()
     lv_label_set_text(label5, "a5:");
     lv_obj_align(label5, LV_ALIGN_TOP_LEFT, 2, 80);
 
+    lv_obj_t *label6 = lv_label_create(lv_scr_act());
+    lv_label_set_long_mode(label6, LV_LABEL_LONG_SCROLL_CIRCULAR); /*Circular scroll*/
+    lv_obj_set_width(label6, 120);
+    lv_label_set_text(label6, "a6:");
+    lv_obj_align(label6, LV_ALIGN_TOP_LEFT, 2, 100);
+
     t1 = lv_label_create(lv_scr_act());
     t2 = lv_label_create(lv_scr_act());
     t3 = lv_label_create(lv_scr_act());
     t4 = lv_label_create(lv_scr_act());
     t5 = lv_label_create(lv_scr_act());
+    t6 = lv_label_create(lv_scr_act());
 
     lv_label_set_long_mode(t1, LV_LABEL_LONG_SCROLL_CIRCULAR);
     lv_label_set_long_mode(t2, LV_LABEL_LONG_SCROLL_CIRCULAR);
     lv_label_set_long_mode(t3, LV_LABEL_LONG_SCROLL_CIRCULAR);
     lv_label_set_long_mode(t4, LV_LABEL_LONG_SCROLL_CIRCULAR);
     lv_label_set_long_mode(t5, LV_LABEL_LONG_SCROLL_CIRCULAR);
+    lv_label_set_long_mode(t6, LV_LABEL_LONG_SCROLL_CIRCULAR);
 
     lv_obj_set_width(t1, 128);
     lv_obj_set_width(t2, 128);
     lv_obj_set_width(t3, 128);
     lv_obj_set_width(t4, 128);
     lv_obj_set_width(t5, 128);
+    lv_obj_set_width(t6, 128);
 
     String temp = "0.00°";
 
@@ -110,12 +120,14 @@ void show_init()
     lv_label_set_text(t3, temp.c_str());
     lv_label_set_text(t4, temp.c_str());
     lv_label_set_text(t5, temp.c_str());
+    lv_label_set_text(t6, temp.c_str());
 
     lv_obj_align(t1, LV_ALIGN_TOP_LEFT, 26, 0);
     lv_obj_align(t2, LV_ALIGN_TOP_LEFT, 26, 20);
     lv_obj_align(t3, LV_ALIGN_TOP_LEFT, 26, 40);
     lv_obj_align(t4, LV_ALIGN_TOP_LEFT, 26, 60);
     lv_obj_align(t5, LV_ALIGN_TOP_LEFT, 26, 80);
+    lv_obj_align(t5, LV_ALIGN_TOP_LEFT, 26, 100);
 
     Serial.println("Setup done");
 }
@@ -139,6 +151,9 @@ void show(uint8_t index, float value)
         break;
     case 5:
         lv_label_set_text(t5, temp.c_str());
+        break;
+    case 6:
+        lv_label_set_text(t6, temp.c_str());
         break;
     }
 }

@@ -12,8 +12,8 @@ import 'loading_dialog.dart';
 
 class DeviceItemUI extends StatefulWidget {
   const DeviceItemUI(this.res, this.close, {Key? key}) : super(key: key);
-  final ScanResult res;
-  final OnDialogClose close;
+  final ScanResult? res;
+  final OnDialogClose? close;
 
   final String title = "数据显示";
 
@@ -35,7 +35,12 @@ class _DeviceItemPageState extends State<DeviceItemUI>
 
   _DeviceItemPageState() {
     Future.delayed(const Duration(milliseconds: 100), () {
-      test();
+      if(widget.res != null) {
+        test();
+      } else {
+        _init = true;
+        _test();
+      }
     });
   }
 
@@ -113,13 +118,7 @@ class _DeviceItemPageState extends State<DeviceItemUI>
 
   void test() async {
     showLoadingDialog();
-    // if (widget.res == null) {
-    //   _init = true;
-    //   show("连接错误", "设备为空");
-    //   hideLoadingDialog();
-    //   return;
-    // }
-    _item = BluetoothItem(widget.res, this);
+    _item = BluetoothItem(widget.res!, this);
     if (!await _item.ok) {
       pop();
       show("不支持的设备", "你链接的不是指定的设备");
@@ -157,8 +156,8 @@ class _DeviceItemPageState extends State<DeviceItemUI>
 
   void _map() {
     _test();
-    // _isMap = true;
-    // goto(_mapUI = MapUI(this));
+    _isMap = true;
+    goto(_mapUI = MapUI(this));
     if (_isMap) {
       Future.delayed(const Duration(milliseconds: 10), () {
         _mapUI.data = _a1.data;
