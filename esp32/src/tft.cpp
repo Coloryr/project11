@@ -127,7 +127,7 @@ void show_init()
     lv_obj_align(t3, LV_ALIGN_TOP_LEFT, 26, 40);
     lv_obj_align(t4, LV_ALIGN_TOP_LEFT, 26, 60);
     lv_obj_align(t5, LV_ALIGN_TOP_LEFT, 26, 80);
-    lv_obj_align(t5, LV_ALIGN_TOP_LEFT, 26, 100);
+    lv_obj_align(t6, LV_ALIGN_TOP_LEFT, 26, 100);
 
     Serial.println("Setup done");
 }

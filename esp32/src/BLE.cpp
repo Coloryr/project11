@@ -24,6 +24,7 @@ const char *command2 = "a2:";
 const char *command3 = "a3:";
 const char *command4 = "a4:";
 const char *command5 = "a5:";
+const char *command6 = "a6:";
 
 bool BLEsend = false;
 
@@ -102,33 +103,27 @@ void setupBLE()
 
 void go()
 {
-    float res = (float)random(36000) / 100;
-    show(1, res);
-    String temp1 = command1 + String(res, 2);
+    String temp1 = command1 + String(a1, 2);
     txC->setValue(temp1.c_str());
     txC->notify();
 
-    res = (float)random(36000) / 100;
-    show(2, res);
-    temp1 = command2 + String(res, 2);
+    temp1 = command2 + String(a2, 2);
     txC->setValue(temp1.c_str());
     txC->notify();
 
-    res = (float)random(36000) / 100;
-    show(3, res);
-    temp1 = command3 + String(res, 2);
+    temp1 = command3 + String(a3, 2);
     txC->setValue(temp1.c_str());
     txC->notify();
 
-    res = (float)random(36000) / 100;
-    show(4, res);
-    temp1 = command4 + String(res, 2);
+    temp1 = command4 + String(a4, 2);
     txC->setValue(temp1.c_str());
     txC->notify();
 
-    res = (float)random(36000) / 100;
-    show(5, res);
-    temp1 = command5 + String(res, 2);
+    temp1 = command5 + String(a5, 2);
+    txC->setValue(temp1.c_str());
+    txC->notify();
+
+    temp1 = command6 + String(a6, 2);
     txC->setValue(temp1.c_str());
     txC->notify();
 }
