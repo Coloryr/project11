@@ -31,6 +31,7 @@ class _DeviceItemPageState extends State<DeviceItemUI>
   final Item _a3 = Item();
   final Item _a4 = Item();
   final Item _a5 = Item();
+  final Item _a6 = Item();
   late MapUI _mapUI;
 
   _DeviceItemPageState() {
@@ -113,6 +114,11 @@ class _DeviceItemPageState extends State<DeviceItemUI>
       setState(() {
         _a5.update();
       });
+    } else if (data.startsWith("a6:")) {
+      _a6.addData(double.parse(data.substring(3)));
+      setState(() {
+        _a6.update();
+      });
     }
   }
 
@@ -152,6 +158,10 @@ class _DeviceItemPageState extends State<DeviceItemUI>
     setState(() {
       _a5.update();
     });
+    _a6.addData(Random().nextDouble() * 360);
+    setState(() {
+      _a6.update();
+    });
   }
 
   void _map() {
@@ -179,7 +189,8 @@ class _DeviceItemPageState extends State<DeviceItemUI>
             _a2.getItem(),
             _a3.getItem(),
             _a4.getItem(),
-            _a5.getItem()
+            _a5.getItem(),
+            _a6.getItem()
           ],
         ),
       ),

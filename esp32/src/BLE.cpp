@@ -68,7 +68,7 @@ void testtask(void *arg)
         {
             go();
         }
-        delay(2000);
+        delay(300);
     }
 }
 

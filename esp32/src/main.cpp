@@ -33,22 +33,34 @@ void task_adc(void *arg)
     for (;;)
     {
         delay(50);
-        a1 = (float)analogRead(ADC1) * 3300 / (4096 * 360);
+        a1 = (float)analogRead(ADC1) / (4096) * 360;
+        if (a1 <= 0)
+            a1 += 360;
         show(1, a1);
         delay(50);
-        a2 = (float)analogRead(ADC2) * 3300 / (4096 * 360);
+        a2 = (float)analogRead(ADC2) / (4096) * 360;
+        if (a2 <= 0)
+            a2 += 360;
         show(2, a2);
         delay(50);
-        a3 = (float)analogRead(ADC3) * 3300 / (4096 * 360);
+        a3 = (float)analogRead(ADC3) / (4096) * 360;
+        if (a3 <= 0)
+            a3 += 360;
         show(3, a3);
         delay(50);
-        a4 = (float)analogRead(ADC4) * 3300 / (4096 * 360);
+        a4 = (float)analogRead(ADC4) / (4096) * 360;
+        if (a4 <= 0)
+            a4 += 360;
         show(4, a4);
         delay(50);
-        a5 = (float)analogRead(ADC5) * 3300 / (4096 * 360);
+        a5 = (float)analogRead(ADC5) / (4096) * 360;
+        if (a5 <= 0)
+            a5 += 360;
         show(5, a5);
         delay(50);
-        a6 = (float)analogRead(ADC6) * 3300 / (4096 * 360);
+        a6 = (float)analogRead(ADC6) / (4096) * 360;
+        if (a6 <= 0)
+            a6 += 360;
         show(6, a6);
     }
 }
